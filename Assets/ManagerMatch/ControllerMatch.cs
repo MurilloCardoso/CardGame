@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ControllerMatch : MonoBehaviour
 {
@@ -14,30 +15,34 @@ public class ControllerMatch : MonoBehaviour
     public TextMeshProUGUI TxtStatusOpponent;
     public TextMeshProUGUI TxtTurn;
     public Hand HandPlayer;
-    public Hand HandEnemy;
+    public Button FinishedTurn;
+
     //Player Inicializacao
     public PlayerStatusInMatch Player;
-    public PlayerStatusInMatch Opponent;
     #endregion
     public List<ItemSlot> itemSlots; // Referência a todos os ItemSlots na cena
+
+    
+    #region Config de Inicializacao
     public void Awake()
     {
         //Player Inicializacao 
         List<Card> cardsDeckPlayer = HandPlayer.GetComponent<Hand>().GenerateHand();
         Player = new PlayerStatusInMatch(100, 6, cardsDeckPlayer);
-        TxtStatusOpponent.SetText($"Vida: {Player.Life} - Energia: {Player.Energy}");
         //Player Enemy
-        List<Card> cardsDeckEnemy = HandEnemy.GetComponent<Hand>().GenerateHand();
-        Opponent = new PlayerStatusInMatch(100, 6, cardsDeckEnemy);
-        TxtStatusPlayer.SetText($"Vida: {Opponent.Life} - Energia: {Player.Energy}");
+    
 
-        //Configuração do Turno
-        TxtTurn.SetText($"Turno: {Turn}");
         // Inscreve o ControllerMatch para ouvir quando um ItemSlot recebe um filho
         foreach (ItemSlot itemSlot in itemSlots)
         {
             itemSlot.OnChildReceived += OnItemSlotReceivedChild;
         }
+        TxtTurn.SetText($"Turno: {Turn}");
+    }
+
+    public void UpdateUI_status(TextMeshProUGUI TextUI, PlayerStatusInMatch player)
+    {
+        TextUI.SetText($"Vida: {player.Life} - Energia: {player.Energy}");
     }
 
     // Método que será chamado quando um ItemSlot receber um filho
@@ -65,12 +70,21 @@ public class ControllerMatch : MonoBehaviour
             TxtStatusPlayer.SetText($"Energia insuficiente para jogar {card.Name}. Energia atual: {Player.Energy}");
         }
     }
+    #endregion
 
 
-    public void NextTurn()
+
+    public void NextTurn( )
     {
         Turn++;
         TxtTurn.SetText($"Turno: {Turn}");
+        // Itera sobre todos os botões nos filhos de HandPlayer e desativa a interação
+        
+        foreach (Button button in HandPlayer.GetComponentsInChildren<Button>())
+        {
+            button.interactable = !button.interactable;
+        }
+        FinishedTurn.interactable= !FinishedTurn.interactable;
     }
 
 }

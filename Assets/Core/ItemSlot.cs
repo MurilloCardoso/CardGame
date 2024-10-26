@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ItemSlot: MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class ItemSlot: MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Canvas canvas;
     public Transform originalSlot; // Armazena o slot original
@@ -22,44 +22,7 @@ public class ItemSlot: MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IE
         rectTransform = GetComponent<RectTransform>();
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        Debug.Log("OnBeginDrag");
-        originalItemSlot = transform.parent.GetComponent<ItemSlot>(); // Obtém a referência do ItemSlot
-        originalSlot = transform.parent; // Armazena o slot original
-        transform.SetParent(canvas.transform);
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        // Arrasta o objeto enquanto o mouse se move
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        ItemSlot destinationItemSlot = null;
-
-        if (eventData.pointerEnter != null)
-        {
-            destinationItemSlot = eventData.pointerEnter.GetComponent<ItemSlot>();
-        }
-
-        if (destinationItemSlot != null)
-        {
-            // Move o item para o novo slot
-            transform.SetParent(destinationItemSlot.transform);
-            rectTransform.anchoredPosition = Vector2.zero;
-        }
-        else
-        {
-            // Se não soltar em nenhum slot válido, volta para o original
-            transform.SetParent(originalSlot);
-            rectTransform.anchoredPosition = Vector2.zero; 
-            // Dispara o evento notificando que o slot recebeu um filho
-            destinationItemSlot.OnChildReceived?.Invoke(destinationItemSlot, gameObject);
-        }
-    }
+  
 
     public void OnPointerDown(PointerEventData eventData)
     {

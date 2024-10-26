@@ -13,6 +13,4 @@ public class Card : ScriptableObject
     public int Cost;
     public int Attack;
     public int Health;
-
-
 }

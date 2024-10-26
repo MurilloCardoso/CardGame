@@ -32,4 +32,14 @@ public class PlayerStatusInMatch : MonoBehaviour
     {
        _cards.Add(card);
     }
+
+    public List<Card> GetCards()
+    {
+        return _cards;
+    }
+
+    public int GetCardDeckCout()
+    {
+        return _cards.Count;
+    }
 }
